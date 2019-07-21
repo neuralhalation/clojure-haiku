@@ -4,25 +4,23 @@
     [cheshire.core :refer :all]
     [ring.middleware.params :as p]))
 
-(defn user-replace
-  [userRegex replacer string]
-  (clojure.string/replace string userRegex replacer))
 
 (defn basic-count
   [word]
-  user-replace #"(?:[^laeiouy]es|ed|[^laeiouy]e)$" "" word)
+  (clojure.string/replace word #"(?:[^laeiouy]es|ed|[^laeiouy]e)$" ""))
+
 
 (defn y?
   [word]
-  user-replace #"^y" "" word)
+  (clojure.string/replace word #"^y" ""))
 
 (defn match-syllables
   [word]
-  re-find #"[aeiouy]{1,2}" word)
+  (re-seq #"[aeiouy]{1,2}" word))
 
 (defn match
   [word]
-  re-find (match-syllables (y? (basic-count word))))
+  (match-syllables (y? (basic-count word))))
 
 (defn matches
   [words]
@@ -30,15 +28,21 @@
 
 (defn get-lengths
   [matches]
-  (map alength matches))
+  (map count matches))
 
 (defn lengths
   [words]
-  get-lengths (matches words))
+  (get-lengths (matches words)))
 
 (defn pair
   [words]
-  (map words (lengths words)))
+  (interleave words (lengths words)))
+
+; (pair (get (decode word-list) "words"))
+
+(defn paired 
+  [word-resp]
+  (pair (get (decode word-resp) "words")))
 
 (defn syllables-equal?
   [length pairs]
@@ -61,7 +65,7 @@
 
 (defn decoder
   [word-list]
-  parse-string word-list)
+  (parse-string word-list))
 
 (def get-words
   (get (decoder get-word-list) "words"))
