@@ -36,29 +36,11 @@
 
 (defn pair
   [words]
-  (interleave words (lengths words)))
-
-; (pair (get (decode word-list) "words"))
-
-(defn paired 
-  [word-resp]
-  (pair (get (decode word-resp) "words")))
-
-(defn syllables-equal?
-  [length pairs]
-  length == (map (get (keys pairs))))
-
-(defn user-shuffle
-  [words]
-  (shuffle words))
-
-(defn syllables?
-  [syllables pairs]
-  (filter (syllables-equal? syllables pairs)))
+  (zipmap words (words lengths)))
 
 (defn word-by-syllable
-  [syllables words]
-  (first (syllables? syllables (pair (shuffle words)))))
+  [length pairs]
+  (filter (comp #{length} pairs) (keys pairs)))
 
 (def get-word-list
   (-> (http/get "https://api.noopschallenge.com/wordbot?count=1000") :body))
@@ -70,31 +52,27 @@
 (def get-words
   (get (decoder get-word-list) "words"))
 
-(defn first-line
-  [words]
-  (vector (word-by-syllable 2 words) 
-          (word-by-syllable 3 words)))
+(def shuffled (shuffle get-words))
 
-(defn second-line
-  [words]
-  (vector (word-by-syllable 2 words)
-          (word-by-syllable 1 words)
-          (word-by-syllable 4 words)))
+(def paired (pair shuffled))
 
-(defn third-line
-   [words]
-   (vector (word-by-syllable 4 words)
-           (word-by-syllable 1 words)))
+(def first-line
+  (vector (word-by-syllable 2 paired) 
+          (word-by-syllable 3 paired)))
 
-(defn get-word
-  [word-map]
-  (if (word-map not= nil) 
-    (get word-map (first (keys word-map))) ("fuck")))
+(def second-line
+  (vector (word-by-syllable 2 paired)
+          (word-by-syllable 1 paired)
+          (word-by-syllable 4 paired)))
 
-(defn line-generator
-  [lines words]
-  (if (words not= nil) 
-    (clojure.string/join " " (map get-word lines words))
+(def third-line
+   (vector (word-by-syllable 4 paired)
+           (word-by-syllable 1 paired)))
+
+(defn line-generator 
+  [line-vector]
+  (if (line-vector not= nil)
+    (clojure.string/join " " line-vector)
     ("fuck")))
 
 (def wrap-params p/wrap-params)

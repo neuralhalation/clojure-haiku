@@ -11,9 +11,9 @@
         [:div {:class "container"}
           [:h2 "shitty haikus"]
           (if (words not= nil)
-            ([:p (line-generator first-line words)]
-             [:p (line-generator second-line words)]
-             [:p (line-generator third-line words)])
+            ([:p (line-generator first-line)]
+             [:p (line-generator second-line)]
+             [:p (line-generator third-line)])
             ([:p "get inspired"])
           )
           [:submit-button :on-click get-words :text "inspire me more"]
