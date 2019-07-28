@@ -8,14 +8,17 @@
             [compojure.core :refer :all]
             [compojure.handler :as handler]
             [compojure.route :as route]
-            [clojure-haiku.views :as view]))
+            [clojure-haiku.views :as view]
+            [clojure-haiku.layout :as layout]))
 
 
 (defroutes app-routes
-  (GET "/" [words] (view/main m/get-words))
+  (GET "/" [] (layout/application "Home" (view/main)))
+  (GET "/random-haiku" [word-list] (layout/application "shitty haikus" (view/random-haiku m/get-word-list)))
   (route/resources "/")
   ; if page not found
-  (route/not-found "Page not found"))
+  (ANY "*" [] (route/not-found (layout/application "page not found" (view/not-found)))))
   
+
 (def handler
   (handler/site app-routes))

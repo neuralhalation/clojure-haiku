@@ -36,7 +36,7 @@
 
 (defn pair
   [words]
-  (zipmap words (words lengths)))
+  (zipmap words (lengths words)))
 
 (defn word-by-syllable
   [length pairs]
@@ -49,30 +49,42 @@
   [word-list]
   (parse-string word-list))
 
-(def get-words
-  (get (decoder get-word-list) "words"))
+(defn get-words
+  [word-list]
+  (get (decoder word-list) "words"))
 
-(def shuffled (shuffle get-words))
+(defn shuffle-list [word-list] (shuffle (get-words word-list)))
 
-(def paired (pair shuffled))
+(defn paired [word-list] (pair (shuffle-list word-list)))
 
-(def first-line
-  (vector (word-by-syllable 2 paired) 
-          (word-by-syllable 3 paired)))
+(defn get-word
+  [length pairs]
+  (first (word-by-syllable length pairs)))
 
-(def second-line
-  (vector (word-by-syllable 2 paired)
-          (word-by-syllable 1 paired)
-          (word-by-syllable 4 paired)))
+(defn l1w1 [word-list] (get-word 2 (paired word-list)))
 
-(def third-line
-   (vector (word-by-syllable 4 paired)
-           (word-by-syllable 1 paired)))
+(defn l1w2 [word-list] (get-word 3 (paired word-list)))
 
-(defn line-generator 
-  [line-vector]
-  (if (line-vector not= nil)
-    (clojure.string/join " " line-vector)
-    ("fuck")))
+(defn l2w1 [word-list] (get-word 3 (paired word-list)))
+
+(defn l2w2 [word-list] (get-word 1 (paired word-list)))
+
+(defn l2w3 [word-list] (get-word 3 (paired word-list)))
+
+(defn l3w1 [word-list] (get-word 1 (paired word-list)))
+
+(defn l3w2 [word-list] (get-word 4 (paired word-list)))
+
+(defn first-line [word-list] [(l1w1 word-list) (l1w2 word-list)])
+
+(defn second-line [word-list] [(l2w1 word-list) (l2w2 word-list) (l2w3 word-list)])
+
+(defn third-line [word-list] [(l3w1 word-list) (l3w2 word-list)])
+
+(defn line-generator
+  [line]
+  (if line 
+    (clojure.string/join " " line)
+    "fuck"))
 
 (def wrap-params p/wrap-params)
