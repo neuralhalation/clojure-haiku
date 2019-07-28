@@ -53,13 +53,11 @@
   [word-list]
   (get (decoder word-list) "words"))
 
-(defn shuffle-list [word-list] (shuffle (get-words word-list)))
-
-(defn paired [word-list] (pair (shuffle-list word-list)))
+(defn paired [word-list] (pair (get-words word-list)))
 
 (defn get-word
   [length pairs]
-  (first (word-by-syllable length pairs)))
+  (rand-nth (word-by-syllable length pairs)))
 
 (defn l1w1 [word-list] (get-word 2 (paired word-list)))
 
