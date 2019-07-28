@@ -14,7 +14,7 @@
     [:h2 "The Clojure Bots"]
     [:br]
     [:h5 (link-to "/random-haiku" "the random haiku bot")]
-    [:p "A bot that generates random haikus pulling from " (link-to "http://noopschallenge.com/challenges/wordbot") " and using a regular expression to do syllable matching."]])
+    [:p "A bot that generates random haikus pulling from " [:a {:href "http://noopschallenge.com/challenges/wordbot"} "noopschallenge.com"] " and using a regular expression to do syllable matching."]])
 
 (defn random-haiku
   [word-list]
